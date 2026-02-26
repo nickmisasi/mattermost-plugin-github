@@ -47,23 +47,35 @@ function GithubItems(props: GithubItemsProps) {
         }
 
         // Determine if this is a PR item for drill-down
+        // Parse owner/repo from html_url since repository_url may be HTML or API format
         const isPR = item.html_url && item.html_url.includes('/pull/');
-        const canDrillDown = isPR && props.onSelectPR && repoName;
+        let prOwner = '';
+        let prRepo = '';
+        if (isPR) {
+            try {
+                const url = new URL(item.html_url);
+                const segments = url.pathname.split('/').filter(Boolean);
+                if (segments.length >= 4) {
+                    prOwner = segments[0];
+                    prRepo = segments[1];
+                }
+            } catch {
+                // invalid URL, skip
+            }
+        }
+        const canDrillDown = isPR && props.onSelectPR && prOwner && prRepo;
         const handlePRClick = (e: React.MouseEvent) => {
             if (canDrillDown) {
                 e.preventDefault();
                 e.stopPropagation();
-                const parts = repoName.split('/');
-                if (parts.length === 2) {
-                    const titleText = item.title || item.subject?.title || '';
-                    props.onSelectPR!({
-                        owner: parts[0],
-                        repo: parts[1],
-                        number: item.number,
-                        title: titleText,
-                        url: item.html_url,
-                    });
-                }
+                const titleText = item.title || item.subject?.title || '';
+                props.onSelectPR!({
+                    owner: prOwner,
+                    repo: prRepo,
+                    number: item.number,
+                    title: titleText,
+                    url: item.html_url,
+                });
             }
         };
 
