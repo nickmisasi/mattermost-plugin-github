@@ -48,12 +48,15 @@ function GithubItems(props: GithubItemsProps) {
 
         // Determine if this is a PR item for drill-down
         const isPR = item.html_url && item.html_url.includes('/pull/');
-        const handlePRClick = () => {
-            if (isPR && props.onSelectPR && repoName) {
+        const canDrillDown = isPR && props.onSelectPR && repoName;
+        const handlePRClick = (e: React.MouseEvent) => {
+            if (canDrillDown) {
+                e.preventDefault();
+                e.stopPropagation();
                 const parts = repoName.split('/');
                 if (parts.length === 2) {
                     const titleText = item.title || item.subject?.title || '';
-                    props.onSelectPR({
+                    props.onSelectPR!({
                         owner: parts[0],
                         repo: parts[1],
                         number: item.number,
@@ -282,8 +285,8 @@ function GithubItems(props: GithubItemsProps) {
         return (
             <div
                 key={item.id}
-                style={{...style.container, ...(isPR && props.onSelectPR ? {cursor: 'pointer'} : {})}}
-                {...(isPR && props.onSelectPR ? {onClick: handlePRClick} : {})}
+                style={{...style.container, ...(canDrillDown ? {cursor: 'pointer'} : {})}}
+                {...(canDrillDown ? {onClick: handlePRClick} : {})}
             >
                 <div>
                     <strong>
