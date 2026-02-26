@@ -6,7 +6,7 @@ import {bindActionCreators} from 'redux';
 
 import {getReviewsDetails, getYourPrsDetails, selectPR, clearSelectedPR, getPRReviewThreads, getAIAgents} from '../../actions';
 
-import {getSidebarData, getSelectedPR} from 'src/selectors';
+import {getSidebarData, getSelectedPR} from '../../selectors';
 
 import SidebarRight from './sidebar_right.jsx';
 
