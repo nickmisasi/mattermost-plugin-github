@@ -8,7 +8,7 @@ import {ClientError} from '@mattermost/client';
 import {ApiError} from '../client/client';
 import Client from '../client';
 
-import {APIError, PrsDetailsData, ShowRhsPluginActionData, SelectedPRData} from '../types/github_types';
+import {APIError, PrsDetailsData, ShowRhsPluginActionData, SelectedPRData, AIAgentsData} from '../types/github_types';
 
 import {getPluginState} from '../selectors';
 
@@ -548,7 +548,7 @@ export function getAIAgents() {
 
             dispatch({
                 type: ActionTypes.RECEIVED_AI_AGENTS,
-                data,
+                data: (data as AIAgentsData).agents || [],
             });
 
             return {data};

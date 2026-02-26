@@ -105,7 +105,7 @@ func (c *Client) GetReviewThreads(ctx context.Context, owner, name string, prNum
 				commentNode := threadNode.Comments.Nodes[j]
 				comment := ReviewComment{
 					ID:          string(commentNode.ID),
-					DatabaseID:  int(commentNode.DatabaseID),
+					DatabaseID:  commentNode.DatabaseID,
 					Body:        string(commentNode.Body),
 					AuthorLogin: string(commentNode.Author.Login),
 					CreatedAt:   commentNode.CreatedAt.Time,

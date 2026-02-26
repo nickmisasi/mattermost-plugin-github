@@ -17,7 +17,7 @@ type (
 
 	reviewThreadCommentNode struct {
 		ID             githubv4.String
-		DatabaseID     githubv4.Int
+		DatabaseID     int
 		Body           githubv4.String
 		Author         authorQuery
 		CreatedAt      githubv4.DateTime
