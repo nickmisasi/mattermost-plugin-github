@@ -3,6 +3,8 @@
 
 import React from 'react';
 
+import {ChevronLeftIcon} from '@primer/octicons-react';
+
 import {Theme} from 'mattermost-redux/selectors/entities/preferences';
 import {makeStyleFromTheme, changeOpacity} from 'mattermost-redux/utils/theme_utils';
 
@@ -26,7 +28,8 @@ const PRReviewDetailHeader: React.FC<Props> = ({title, prNumber, prUrl, summary,
                 style={style.backButton}
                 onClick={onBack}
             >
-                {'\u2190 Back'}
+                <ChevronLeftIcon size={16}/>
+                {'Back'}
             </button>
             <div style={style.titleRow}>
                 <a
@@ -43,11 +46,11 @@ const PRReviewDetailHeader: React.FC<Props> = ({title, prNumber, prUrl, summary,
                     <span style={style.approvedCount}>
                         {summary.approved + ' approved'}
                     </span>
-                    <span style={style.separator}>{'|'}</span>
+                    <span style={style.dotSeparator}/>
                     <span style={style.changesRequestedCount}>
                         {summary.changes_requested + ' changes requested'}
                     </span>
-                    <span style={style.separator}>{'|'}</span>
+                    <span style={style.dotSeparator}/>
                     <span style={style.unresolvedCount}>
                         {summary.unresolved_threads + ' unresolved threads'}
                     </span>
@@ -60,7 +63,7 @@ const PRReviewDetailHeader: React.FC<Props> = ({title, prNumber, prUrl, summary,
 const getStyle = makeStyleFromTheme((theme) => {
     return {
         container: {
-            padding: '12px 15px',
+            padding: '16px',
             borderBottom: `1px solid ${changeOpacity(theme.centerChannelColor, 0.2)}`,
         },
         backButton: {
@@ -68,24 +71,29 @@ const getStyle = makeStyleFromTheme((theme) => {
             border: 'none',
             color: theme.linkColor,
             cursor: 'pointer',
-            padding: '0 0 8px 0',
+            padding: '4px 8px',
+            marginBottom: '8px',
             fontSize: '13px',
-            fontWeight: 600,
+            fontWeight: 400,
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: '4px',
+            borderRadius: '4px',
         },
         titleRow: {
-            marginBottom: '6px',
+            marginBottom: '8px',
         },
         titleLink: {
             color: theme.centerChannelColor,
             fontSize: '14px',
-            fontWeight: 700,
+            fontWeight: 600,
             lineHeight: '1.4',
             textDecoration: 'none',
         },
         summaryRow: {
             display: 'flex',
             alignItems: 'center',
-            gap: '6px',
+            gap: '8px',
             fontSize: '12px',
             flexWrap: 'wrap',
         },
@@ -101,8 +109,12 @@ const getStyle = makeStyleFromTheme((theme) => {
             color: changeOpacity(theme.centerChannelColor, 0.7),
             fontWeight: 600,
         },
-        separator: {
-            color: changeOpacity(theme.centerChannelColor, 0.3),
+        dotSeparator: {
+            width: '3px',
+            height: '3px',
+            borderRadius: '50%',
+            backgroundColor: changeOpacity(theme.centerChannelColor, 0.3),
+            display: 'inline-block',
         },
     };
 });

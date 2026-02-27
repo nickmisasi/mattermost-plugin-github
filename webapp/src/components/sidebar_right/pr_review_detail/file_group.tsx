@@ -3,6 +3,8 @@
 
 import React, {useState} from 'react';
 
+import {ChevronDownIcon} from '@primer/octicons-react';
+
 import {Theme} from 'mattermost-redux/selectors/entities/preferences';
 import {changeOpacity} from 'mattermost-redux/utils/theme_utils';
 
@@ -38,18 +40,21 @@ const FileGroup: React.FC<Props> = ({
     prNumber,
 }) => {
     const [collapsed, setCollapsed] = useState(false);
+    const [hovered, setHovered] = useState(false);
 
     return (
         <div style={{...styles.container, borderBottom: `1px solid ${changeOpacity(theme.centerChannelColor, 0.1)}`}}>
             <div
                 style={{
                     ...styles.header,
-                    backgroundColor: changeOpacity(theme.centerChannelColor, 0.05),
+                    backgroundColor: hovered ? changeOpacity(theme.centerChannelColor, 0.06) : changeOpacity(theme.centerChannelColor, 0.05),
                 }}
                 onClick={() => setCollapsed(!collapsed)}
+                onMouseEnter={() => setHovered(true)}
+                onMouseLeave={() => setHovered(false)}
             >
                 <span style={{...styles.arrow, transform: collapsed ? 'rotate(-90deg)' : 'rotate(0deg)'}}>
-                    {'\u25BE'}
+                    <ChevronDownIcon size={16}/>
                 </span>
                 <span style={{...styles.filePath, color: theme.centerChannelColor}}>
                     {filePath}
@@ -94,9 +99,9 @@ const styles: Record<string, React.CSSProperties> = {
         userSelect: 'none',
     },
     arrow: {
-        fontSize: '12px',
-        transition: 'transform 0.15s',
-        display: 'inline-block',
+        transition: 'transform 0.15s ease',
+        display: 'inline-flex',
+        alignItems: 'center',
     },
     filePath: {
         fontSize: '12px',
@@ -112,7 +117,7 @@ const styles: Record<string, React.CSSProperties> = {
         flexShrink: 0,
     },
     threadsList: {
-        padding: '4px 8px',
+        padding: '8px 12px',
     },
 };
 

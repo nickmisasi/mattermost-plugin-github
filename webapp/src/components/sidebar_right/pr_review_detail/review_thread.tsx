@@ -3,6 +3,8 @@
 
 import React, {useState, useCallback} from 'react';
 
+import {ChevronRightIcon} from '@primer/octicons-react';
+
 import {Theme} from 'mattermost-redux/selectors/entities/preferences';
 import {changeOpacity} from 'mattermost-redux/utils/theme_utils';
 
@@ -24,6 +26,55 @@ type Props = {
     repo: string;
     prNumber: number;
 };
+
+const StyledCheckbox: React.FC<{checked: boolean; onChange: () => void; onClick?: (e: React.MouseEvent) => void; theme: Theme}> = ({checked, onChange, onClick, theme}) => (
+    <div
+        style={{position: 'relative', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0}}
+        onClick={(e) => {
+            if (onClick) {
+                onClick(e);
+            }
+            onChange();
+        }}
+    >
+        <input
+            type='checkbox'
+            checked={checked}
+            onChange={onChange}
+            style={{position: 'absolute', opacity: 0, width: '16px', height: '16px', cursor: 'pointer', margin: 0}}
+        />
+        <div
+            style={{
+                width: '16px',
+                height: '16px',
+                borderRadius: '3px',
+                cursor: 'pointer',
+                border: checked ? `2px solid ${theme.buttonBg}` : `2px solid ${changeOpacity(theme.centerChannelColor, 0.3)}`,
+                backgroundColor: checked ? theme.buttonBg : 'transparent',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+            }}
+        >
+            {checked && (
+                <svg
+                    width='10'
+                    height='8'
+                    viewBox='0 0 10 8'
+                    fill='none'
+                >
+                    <path
+                        d='M1 4L3.5 6.5L9 1'
+                        stroke='white'
+                        strokeWidth='2'
+                        strokeLinecap='round'
+                        strokeLinejoin='round'
+                    />
+                </svg>
+            )}
+        </div>
+    </div>
+);
 
 const ReviewThread: React.FC<Props> = ({
     thread,
@@ -68,30 +119,34 @@ const ReviewThread: React.FC<Props> = ({
                 style={{
                     ...styles.resolvedCollapsed,
                     backgroundColor: changeOpacity(theme.centerChannelColor, 0.03),
-                    borderLeft: `3px solid ${changeOpacity(theme.centerChannelColor, 0.2)}`,
+                    borderLeft: `2px solid ${changeOpacity(theme.centerChannelColor, 0.2)}`,
                 }}
                 onClick={() => setExpandedResolved(true)}
             >
-                <div style={{display: 'flex', alignItems: 'center', gap: '8px'}}>
-                    <input
-                        type='checkbox'
+                <div style={{display: 'flex', alignItems: 'center', gap: '8px', overflow: 'hidden', flex: 1}}>
+                    <StyledCheckbox
                         checked={isSelected}
-                        onChange={(e) => {
-                            e.stopPropagation();
-                            handleCheckboxChange();
-                        }}
+                        onChange={handleCheckboxChange}
                         onClick={(e) => e.stopPropagation()}
-                        style={styles.checkbox}
+                        theme={theme}
                     />
-                    <span style={{...styles.resolvedLabel, color: changeOpacity(theme.centerChannelColor, 0.5)}}>
+                    <span
+                        style={{
+                            ...styles.resolvedLabel,
+                            color: changeOpacity(theme.centerChannelColor, 0.5),
+                            overflow: 'hidden',
+                            textOverflow: 'ellipsis',
+                            whiteSpace: 'nowrap',
+                        }}
+                    >
                         {'Resolved thread'}
-                        {thread.resolved_by ? ` by ${thread.resolved_by.login}` : ''}
+                        {thread.resolved_by ? ` by ${thread.resolved_by}` : ''}
                         {' - '}
                         {firstComment?.body ? firstComment.body.substring(0, 80) + (firstComment.body.length > 80 ? '...' : '') : ''}
                     </span>
                 </div>
-                <span style={{...styles.expandHint, color: changeOpacity(theme.centerChannelColor, 0.4)}}>
-                    {'Click to expand'}
+                <span style={{color: changeOpacity(theme.centerChannelColor, 0.4), display: 'inline-flex', flexShrink: 0}}>
+                    <ChevronRightIcon size={16}/>
                 </span>
             </div>
         );
@@ -102,25 +157,33 @@ const ReviewThread: React.FC<Props> = ({
             style={{
                 ...styles.container,
                 backgroundColor: isResolved ? changeOpacity(theme.centerChannelColor, 0.03) : 'transparent',
-                borderLeft: `3px solid ${isResolved ? changeOpacity(theme.centerChannelColor, 0.2) : changeOpacity(theme.buttonBg, 0.5)}`,
+                borderLeft: `2px solid ${isResolved ? changeOpacity(theme.centerChannelColor, 0.2) : changeOpacity(theme.buttonBg, 0.5)}`,
             }}
         >
             <div style={styles.threadHeader}>
-                <input
-                    type='checkbox'
+                <StyledCheckbox
                     checked={isSelected}
                     onChange={handleCheckboxChange}
-                    style={styles.checkbox}
+                    theme={theme}
                 />
                 {isResolved && (
-                    <span style={{...styles.resolvedBadge, color: changeOpacity(theme.centerChannelColor, 0.5)}}>
+                    <span
+                        style={{
+                            ...styles.resolvedBadge,
+                            backgroundColor: changeOpacity(theme.onlineIndicator, 0.1),
+                            color: changeOpacity(theme.onlineIndicator, 0.8),
+                        }}
+                    >
                         {'Resolved'}
                     </span>
                 )}
             </div>
 
             {firstComment?.diff_hunk && (
-                <DiffHunkDisplay diffHunk={firstComment.diff_hunk}/>
+                <DiffHunkDisplay
+                    diffHunk={firstComment.diff_hunk}
+                    theme={theme}
+                />
             )}
 
             {thread.comments.map((comment) => (
@@ -138,8 +201,14 @@ const ReviewThread: React.FC<Props> = ({
                 <button
                     style={{
                         ...styles.resolveButton,
-                        color: isResolved ? theme.dndIndicator : theme.onlineIndicator,
-                        border: `1px solid ${isResolved ? changeOpacity(theme.dndIndicator, 0.3) : changeOpacity(theme.onlineIndicator, 0.3)}`,
+                        ...(isResolved ? {
+                            color: changeOpacity(theme.centerChannelColor, 0.6),
+                            border: `1px solid ${changeOpacity(theme.centerChannelColor, 0.3)}`,
+                        } : {
+                            color: theme.buttonColor,
+                            backgroundColor: theme.buttonBg,
+                            border: `1px solid ${theme.buttonBg}`,
+                        }),
                     }}
                     onClick={handleResolveToggle}
                 >
@@ -182,24 +251,17 @@ const styles: Record<string, React.CSSProperties> = {
         fontSize: '12px',
         fontStyle: 'italic',
     },
-    expandHint: {
-        fontSize: '11px',
-        flexShrink: 0,
-    },
     threadHeader: {
         display: 'flex',
         alignItems: 'center',
         gap: '8px',
         marginBottom: '8px',
     },
-    checkbox: {
-        cursor: 'pointer',
-        margin: 0,
-    },
     resolvedBadge: {
         fontSize: '11px',
         fontWeight: 600,
-        textTransform: 'uppercase' as const,
+        padding: '2px 8px',
+        borderRadius: '10px',
     },
     threadActions: {
         display: 'flex',

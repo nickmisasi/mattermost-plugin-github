@@ -53,9 +53,11 @@ const ReplyBox: React.FC<Props> = ({onSubmit, theme}) => {
             <textarea
                 style={{
                     ...styles.textarea,
-                    backgroundColor: changeOpacity(theme.centerChannelColor, 0.05),
+                    backgroundColor: expanded ? changeOpacity(theme.centerChannelColor, 0.05) : changeOpacity(theme.centerChannelColor, 0.06),
                     color: theme.centerChannelColor,
-                    border: `1px solid ${changeOpacity(theme.centerChannelColor, 0.2)}`,
+                    border: `1px solid ${expanded ? theme.buttonBg : changeOpacity(theme.centerChannelColor, 0.2)}`,
+                    boxShadow: expanded ? `0 0 0 2px ${changeOpacity(theme.buttonBg, 0.15)}` : 'none',
+                    ...(!expanded && {minHeight: '32px'}),
                 }}
                 rows={expanded ? 4 : 1}
                 value={text}
@@ -70,8 +72,8 @@ const ReplyBox: React.FC<Props> = ({onSubmit, theme}) => {
                     <button
                         style={{
                             ...styles.submitButton,
-                            backgroundColor: text.trim() ? theme.buttonBg : changeOpacity(theme.centerChannelColor, 0.3),
-                            color: text.trim() ? theme.buttonColor : changeOpacity(theme.centerChannelColor, 0.5),
+                            backgroundColor: text.trim() ? theme.buttonBg : changeOpacity(theme.centerChannelColor, 0.08),
+                            color: text.trim() ? theme.buttonColor : changeOpacity(theme.centerChannelColor, 0.3),
                             cursor: text.trim() && !submitting ? 'pointer' : 'default',
                         }}
                         onClick={handleSubmit}

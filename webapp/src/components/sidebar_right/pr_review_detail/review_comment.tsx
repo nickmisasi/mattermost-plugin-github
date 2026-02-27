@@ -3,6 +3,8 @@
 
 import React, {useCallback} from 'react';
 
+import {PersonIcon} from '@primer/octicons-react';
+
 import {Theme} from 'mattermost-redux/selectors/entities/preferences';
 import {changeOpacity} from 'mattermost-redux/utils/theme_utils';
 
@@ -29,15 +31,32 @@ const ReviewComment: React.FC<Props> = ({comment, toggleReaction, owner, repo, t
     return (
         <div style={{...styles.container, borderBottom: `1px solid ${changeOpacity(theme.centerChannelColor, 0.1)}`}}>
             <div style={styles.header}>
-                {comment.author?.avatar_url && (
+                {comment.author?.avatar_url ? (
                     <img
                         src={comment.author.avatar_url}
                         alt={comment.author.login}
                         style={styles.avatar}
                     />
+                ) : (
+                    <div
+                        style={{
+                            width: '20px',
+                            height: '20px',
+                            borderRadius: '50%',
+                            backgroundColor: changeOpacity(theme.centerChannelColor, 0.15),
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            flexShrink: 0,
+                        }}
+                    >
+                        <span style={{color: changeOpacity(theme.centerChannelColor, 0.5), display: 'inline-flex'}}>
+                            <PersonIcon size={12}/>
+                        </span>
+                    </div>
                 )}
-                <strong style={{fontSize: '13px', color: theme.centerChannelColor}}>
-                    {comment.author?.login || 'unknown'}
+                <strong style={{fontSize: '14px', fontWeight: 600, color: theme.centerChannelColor}}>
+                    {comment.author?.login || 'GitHub User'}
                 </strong>
                 <span style={{...styles.timestamp, color: changeOpacity(theme.centerChannelColor, 0.6)}}>
                     {timeSince + ' ago'}
@@ -74,10 +93,10 @@ const styles: Record<string, React.CSSProperties> = {
     },
     timestamp: {
         fontSize: '12px',
-        marginLeft: 'auto',
+        marginLeft: '6px',
     },
     body: {
-        fontSize: '13px',
+        fontSize: '14px',
         lineHeight: '1.5',
         whiteSpace: 'pre-wrap',
         wordBreak: 'break-word',

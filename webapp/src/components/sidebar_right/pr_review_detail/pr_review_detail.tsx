@@ -86,86 +86,129 @@ const PRReviewDetail: React.FC<Props> = ({
     const filePaths = Object.keys(threadsGroupedByFile).sort();
 
     return (
-        <React.Fragment>
-            <PRReviewDetailHeader
-                title={title}
-                prNumber={selectedPR.number}
-                prUrl={prUrl}
-                summary={summary}
-                onBack={actions.clearSelectedPR}
-                theme={theme}
-            />
-            <Scrollbars
-                autoHide={true}
-                autoHideTimeout={500}
-                autoHideDuration={500}
-                renderThumbHorizontal={renderThumbHorizontal}
-                renderThumbVertical={renderThumbVertical}
-                renderView={renderView}
-            >
-                {loading && (
-                    <div style={styles.loadingContainer}>
-                        <div style={{...styles.loadingSpinner, borderTopColor: theme.buttonBg}}/>
-                        <span style={{color: changeOpacity(theme.centerChannelColor, 0.6), fontSize: '13px'}}>
-                            {'Loading review threads...'}
-                        </span>
-                    </div>
-                )}
-                {!loading && filePaths.length === 0 && (
-                    <div style={styles.emptyState}>
-                        <span style={{color: changeOpacity(theme.centerChannelColor, 0.5), fontSize: '13px'}}>
-                            {'No review threads found for this pull request.'}
-                        </span>
-                    </div>
-                )}
-                {!loading && filePaths.map((filePath) => (
-                    <FileGroup
-                        key={filePath}
-                        filePath={filePath}
-                        threads={threadsGroupedByFile[filePath]}
-                        selectedCommentIds={selectedCommentIds}
-                        onToggleComment={handleToggleComment}
-                        replyToReviewComment={actions.replyToReviewComment}
-                        toggleReaction={actions.toggleReaction}
-                        resolveThread={actions.resolveThread}
-                        theme={theme}
-                        owner={selectedPR.owner}
-                        repo={selectedPR.repo}
-                        prNumber={selectedPR.number}
-                    />
-                ))}
-                <AIAssignBar
-                    selectedCount={selectedCommentIds.size}
-                    agents={aiAgents}
-                    onAssign={handleAIAssign}
+        <div style={styles.outerContainer}>
+            <div style={styles.headerWrapper}>
+                <PRReviewDetailHeader
+                    title={title}
+                    prNumber={selectedPR.number}
+                    prUrl={prUrl}
+                    summary={summary}
+                    onBack={actions.clearSelectedPR}
                     theme={theme}
                 />
-            </Scrollbars>
-        </React.Fragment>
+            </div>
+            <div style={styles.scrollWrapper}>
+                <Scrollbars
+                    autoHide={true}
+                    autoHideTimeout={500}
+                    autoHideDuration={500}
+                    renderThumbHorizontal={renderThumbHorizontal}
+                    renderThumbVertical={renderThumbVertical}
+                    renderView={renderView}
+                    style={{flex: 1}}
+                >
+                    {loading && (
+                        <div style={styles.loadingContainer}>
+                            <svg
+                                width='24'
+                                height='24'
+                                viewBox='0 0 24 24'
+                            >
+                                <circle
+                                    cx='12'
+                                    cy='12'
+                                    r='10'
+                                    fill='none'
+                                    stroke={changeOpacity(theme.centerChannelColor, 0.15)}
+                                    strokeWidth='3'
+                                />
+                                <circle
+                                    cx='12'
+                                    cy='12'
+                                    r='10'
+                                    fill='none'
+                                    stroke={theme.buttonBg}
+                                    strokeWidth='3'
+                                    strokeDasharray='30 70'
+                                    strokeLinecap='round'
+                                >
+                                    <animateTransform
+                                        attributeName='transform'
+                                        type='rotate'
+                                        from='0 12 12'
+                                        to='360 12 12'
+                                        dur='1s'
+                                        repeatCount='indefinite'
+                                    />
+                                </circle>
+                            </svg>
+                            <span style={{color: changeOpacity(theme.centerChannelColor, 0.6), fontSize: '13px'}}>
+                                {'Loading review threads...'}
+                            </span>
+                        </div>
+                    )}
+                    {!loading && filePaths.length === 0 && (
+                        <div style={styles.emptyState}>
+                            <span style={{color: changeOpacity(theme.centerChannelColor, 0.5), fontSize: '13px'}}>
+                                {'No review threads found for this pull request.'}
+                            </span>
+                        </div>
+                    )}
+                    {!loading && filePaths.map((filePath) => (
+                        <FileGroup
+                            key={filePath}
+                            filePath={filePath}
+                            threads={threadsGroupedByFile[filePath]}
+                            selectedCommentIds={selectedCommentIds}
+                            onToggleComment={handleToggleComment}
+                            replyToReviewComment={actions.replyToReviewComment}
+                            toggleReaction={actions.toggleReaction}
+                            resolveThread={actions.resolveThread}
+                            theme={theme}
+                            owner={selectedPR.owner}
+                            repo={selectedPR.repo}
+                            prNumber={selectedPR.number}
+                        />
+                    ))}
+                </Scrollbars>
+            </div>
+            <AIAssignBar
+                selectedCount={selectedCommentIds.size}
+                agents={aiAgents}
+                onAssign={handleAIAssign}
+                theme={theme}
+            />
+        </div>
     );
 };
 
 const styles: Record<string, React.CSSProperties> = {
+    outerContainer: {
+        display: 'flex',
+        flexDirection: 'column',
+        height: '100%',
+    },
+    headerWrapper: {
+        flexShrink: 0,
+    },
+    scrollWrapper: {
+        flex: 1,
+        overflow: 'hidden',
+        position: 'relative',
+    },
     loadingContainer: {
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
         justifyContent: 'center',
-        padding: '40px 15px',
+        padding: '40px 16px',
         gap: '12px',
-    },
-    loadingSpinner: {
-        width: '24px',
-        height: '24px',
-        border: '3px solid rgba(0, 0, 0, 0.1)',
-        borderRadius: '50%',
-        animation: 'spin 1s linear infinite',
     },
     emptyState: {
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        padding: '40px 15px',
+        padding: '40px 16px',
     },
 };
 

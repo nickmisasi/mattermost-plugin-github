@@ -214,7 +214,7 @@ export interface ReviewCommentData {
 export interface ReviewThreadData {
     id: string;
     is_resolved: boolean;
-    resolved_by: {login: string} | null;
+    resolved_by: string | null;
     path: string;
     line: number;
     start_line: number;

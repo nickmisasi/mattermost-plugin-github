@@ -35,7 +35,7 @@ const AIAssignBar: React.FC<Props> = ({selectedCount, agents, onAssign, theme}) 
                 ...styles.container,
                 backgroundColor: theme.centerChannelBg,
                 borderTop: `1px solid ${changeOpacity(theme.centerChannelColor, 0.2)}`,
-                boxShadow: `0 -2px 6px ${changeOpacity(theme.centerChannelColor, 0.1)}`,
+                boxShadow: `0 -1px 3px ${changeOpacity(theme.centerChannelColor, 0.08)}`,
             }}
         >
             <span style={{...styles.countText, color: theme.centerChannelColor}}>
@@ -76,15 +76,16 @@ const AIAssignBar: React.FC<Props> = ({selectedCount, agents, onAssign, theme}) 
     );
 };
 
+const CHEVRON_SVG = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%23666' stroke-width='1.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E";
+
 const styles: Record<string, React.CSSProperties> = {
     container: {
-        position: 'sticky',
-        bottom: 0,
-        padding: '10px 12px',
+        padding: '8px 12px',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between',
-        zIndex: 10,
+        flexShrink: 0,
+        transition: 'opacity 0.2s ease',
     },
     countText: {
         fontSize: '13px',
@@ -97,16 +98,25 @@ const styles: Record<string, React.CSSProperties> = {
     },
     select: {
         padding: '4px 8px',
+        paddingRight: '24px',
         borderRadius: '4px',
         fontSize: '12px',
+        height: '28px',
         outline: 'none',
+        appearance: 'none',
+        WebkitAppearance: 'none',
+        backgroundImage: `url("${CHEVRON_SVG}")`,
+        backgroundRepeat: 'no-repeat',
+        backgroundPosition: 'right 6px center',
+        backgroundSize: '10px',
     },
     assignButton: {
-        padding: '5px 14px',
+        padding: '0 16px',
         borderRadius: '4px',
         border: 'none',
         fontSize: '12px',
         fontWeight: 600,
+        height: '28px',
         cursor: 'pointer',
     },
 };

@@ -43,6 +43,7 @@ const ReactionBar: React.FC<Props> = ({reactions, onToggleReaction, theme}) => {
     }, [reactions]);
 
     const [localReactions, setLocalReactions] = useState(buildInitialState);
+    const [showAll, setShowAll] = useState(false);
 
     // Sync with props when reactions change from outside
     React.useEffect(() => {
@@ -71,9 +72,14 @@ const ReactionBar: React.FC<Props> = ({reactions, onToggleReaction, theme}) => {
         }
     }, [localReactions, onToggleReaction]);
 
+    const reactionsToShow = showAll ? REACTIONS : REACTIONS.filter((content) => {
+        const data = localReactions[content];
+        return data && data.count > 0;
+    });
+
     return (
         <div style={styles.container}>
-            {REACTIONS.map((content) => {
+            {reactionsToShow.map((content) => {
                 const data = localReactions[content];
                 const isActive = data?.reacted;
                 const count = data?.count || 0;
@@ -95,6 +101,19 @@ const ReactionBar: React.FC<Props> = ({reactions, onToggleReaction, theme}) => {
                     </button>
                 );
             })}
+            {!showAll && (
+                <button
+                    style={{
+                        ...styles.addButton,
+                        border: `1px solid ${changeOpacity(theme.centerChannelColor, 0.2)}`,
+                        color: changeOpacity(theme.centerChannelColor, 0.6),
+                    }}
+                    onClick={() => setShowAll(true)}
+                    title='Show all reactions'
+                >
+                    {'+'}
+                </button>
+            )}
         </div>
     );
 };
@@ -122,6 +141,19 @@ const styles: Record<string, React.CSSProperties> = {
     count: {
         fontSize: '11px',
         fontWeight: 500,
+    },
+    addButton: {
+        width: '24px',
+        height: '24px',
+        borderRadius: '50%',
+        fontSize: '14px',
+        cursor: 'pointer',
+        display: 'inline-flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        background: 'transparent',
+        padding: 0,
+        lineHeight: 1,
     },
 };
 
