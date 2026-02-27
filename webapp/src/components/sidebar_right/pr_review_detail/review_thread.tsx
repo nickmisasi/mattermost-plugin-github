@@ -29,8 +29,9 @@ type Props = {
 
 const StyledCheckbox: React.FC<{checked: boolean; onChange: () => void; onClick?: (e: React.MouseEvent) => void; theme: Theme}> = ({checked, onChange, onClick, theme}) => (
     <div
-        style={{position: 'relative', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0}}
+        style={{position: 'relative', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, cursor: 'pointer'}}
         onClick={(e) => {
+            e.stopPropagation();
             if (onClick) {
                 onClick(e);
             }
@@ -40,8 +41,8 @@ const StyledCheckbox: React.FC<{checked: boolean; onChange: () => void; onClick?
         <input
             type='checkbox'
             checked={checked}
-            onChange={onChange}
-            style={{position: 'absolute', opacity: 0, width: '16px', height: '16px', cursor: 'pointer', margin: 0}}
+            readOnly={true}
+            style={{position: 'absolute', opacity: 0, width: '16px', height: '16px', cursor: 'pointer', margin: 0, pointerEvents: 'none'}}
         />
         <div
             style={{

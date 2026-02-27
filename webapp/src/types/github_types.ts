@@ -200,7 +200,7 @@ export interface ReviewCommentData {
     id: string;
     database_id: number;
     body: string;
-    author: {login: string; avatar_url: string};
+    author_login: string;
     created_at: string;
     updated_at: string;
     url: string;
